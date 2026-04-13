@@ -112,6 +112,8 @@ Recommended package set, subject to local availability:
 - If optional packages such as `titlesec` or `svg` are unavailable, **simplify the styling rather than changing the whole PDF pipeline**.
 - If direct SVG inclusion is fragile, convert Mermaid SVGs to PDF and embed them with `\includegraphics`.
 - Compile twice before final review.
+- Validate the final PDF before returning it: use `verapdf` when available for PDF/A or PDF/UA conformance and accessibility checks, or `pdfcpu validate -mode strict` as a structural validation fallback.
+- If accessibility is a requirement, prefer `verapdf` with the relevant PDF/UA profile and treat validation failures as blockers.
 - Treat Pandoc-based PDF generation as a **fallback**, not the primary method, for complex reports.
 
 ## Color System
@@ -162,7 +164,7 @@ Use this palette for all visual elements:
 4. **Draft sections** - Write the analysis and connect every major claim to supporting evidence.
 5. **Create visuals** - Build Mermaid diagrams, tables, and generated infographics as needed.
 6. **Compose in LaTeX** - Assemble the final report with controlled layout and captions.
-7. **Compile and review** - Run XeLaTeX twice, review the PDF, and fix layout or clarity issues.
+7. **Compile and review** - Run XeLaTeX twice, validate the PDF with `verapdf` or `pdfcpu`, review the output, and fix layout, accessibility, or structural issues.
 
 ## Output Quality Bar
 
@@ -172,3 +174,4 @@ The final report should:
 - Use Mermaid diagrams and generated infographics when they improve clarity.
 - Maintain the default 4:6 diagram/image-to-text balance unless the user instructs otherwise.
 - Be suitable for direct PDF rendering without post-editing.
+- Pass a final PDF validation check and not be returned if it is malformed or fails required accessibility validation.

@@ -165,6 +165,8 @@ Recommended package set, subject to local availability:
 - If optional packages such as `titlesec` or `svg` are unavailable, **simplify the styling rather than changing the whole PDF pipeline**.
 - If direct SVG inclusion is fragile, convert Mermaid SVGs to PDF and embed them with `\includegraphics`.
 - Compile twice before final review.
+- Validate the final PDF before returning it: use `verapdf` when available for PDF/A or PDF/UA conformance and accessibility checks, or `pdfcpu validate -mode strict` as a structural validation fallback.
+- If accessibility is a requirement, prefer `verapdf` with the relevant PDF/UA profile and treat validation failures as blockers.
 - Treat Pandoc-based PDF generation as a **fallback**, not the primary method, for complex reports.
 
 ## Writing Standards
@@ -645,6 +647,14 @@ xelatex v1_market_report.tex
 xelatex v1_market_report.tex
 ```
 
+Then validate the generated PDF before returning it:
+
+```bash
+verapdf v1_market_report.pdf
+verapdf --format text -f ua1 v1_market_report.pdf
+pdfcpu validate -mode strict v1_market_report.pdf
+```
+
 **Step 11: Quality Review**
 
 Verify the report meets quality standards:
@@ -660,6 +670,8 @@ Verify the report meets quality standards:
 - [ ] Table of contents, list of figures, list of tables are accurate
 - [ ] Bibliography is complete
 - [ ] PDF renders without errors
+- [ ] PDF passes `verapdf` or `pdfcpu` validation before delivery
+- [ ] Accessibility validation is checked with `verapdf` when PDF/UA or accessible output is required
 
 **Step 12: Peer Review**
 
@@ -905,6 +917,8 @@ Before finalizing the report, verify:
 
 ### Technical Quality
 - [ ] PDF compiles without errors
+- [ ] PDF passes `verapdf` or `pdfcpu` validation
+- [ ] Accessibility validation is checked with `verapdf` when required
 - [ ] All figures render correctly
 - [ ] Cross-references work
 - [ ] Bibliography complete

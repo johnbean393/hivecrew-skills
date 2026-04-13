@@ -10,6 +10,8 @@ license: Proprietary. LICENSE.txt has complete terms
 
 This guide covers essential PDF processing operations using Python libraries and command-line tools. For advanced features, JavaScript libraries, and detailed examples, see reference.md. If you need to fill out a PDF form, read forms.md and follow its instructions.
 
+When you generate or materially modify a PDF, validate it before returning it. Use `verapdf` when available to check PDF/A or PDF/UA conformance and accessibility claims, and use `pdfcpu` as a structural validation fallback to catch malformed files.
+
 ## Quick Start
 
 ```python
@@ -178,6 +180,23 @@ Use `scripts/convert_pdf_to_images.py <input.pdf> <output_directory>` to render 
 The script now defaults to native Poppler tools when available, so it works even when the Python `pdf2image` package is not installed. Output pages are normalized to `page_1.png`, `page_2.png`, etc., and oversized images are resized to stay within the existing maximum dimension behavior.
 
 ## Command-Line Tools
+
+### PDF Validation Before Return
+```bash
+# Prefer veraPDF for standards/accessibility validation.
+# Let it auto-detect the declared profile, or specify one explicitly.
+verapdf output.pdf
+verapdf --format text -f ua1 output.pdf
+
+# Use pdfcpu for a strict structural integrity check.
+pdfcpu validate -mode strict output.pdf
+```
+
+Validation rules:
+- Do not return a generated PDF until at least one validator succeeds without reporting a malformed file.
+- Prefer `verapdf` for accessibility checks. If the PDF claims PDF/UA conformance or accessibility matters, run a PDF/UA profile such as `-f ua1` or `-f ua2` when appropriate.
+- Use `pdfcpu validate -mode strict` to catch broken xref tables, object issues, and other formatting problems even when the file opens visually.
+- If neither tool is installed, say that the PDF could not be fully validated and avoid claiming the file is standards-compliant or accessible.
 
 ### pdftotext (poppler-utils)
 ```bash
