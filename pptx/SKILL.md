@@ -169,7 +169,11 @@ Before finishing:
    ```bash
    python3 scripts/thumbnail.py output.pptx workspace/final-grid
    ```
-5. Save the final `.pptx`, slide images, and Markdown files to `/Users/hivecrew/Desktop/outbox/`.
+5. Validate the final `.pptx` with `ooxml-validator` and treat any errors as blockers before returning the file:
+   ```bash
+   ooxml-validator output.pptx
+   ```
+6. Save the final `.pptx`, slide images, and Markdown files to `/Users/hivecrew/Desktop/outbox/`.
 
 ### Legacy HTML workflow
 
@@ -186,6 +190,7 @@ When edit slides in an existing PowerPoint presentation, you need to work with t
 3. Edit the XML files (primarily `ppt/slides/slide{N}.xml` and related files)
 4. **CRITICAL**: Validate immediately after each edit and fix any validation errors before proceeding: `python3 ooxml/scripts/validate.py <dir> --original <file>`
 5. Pack the final presentation: `python3 ooxml/scripts/pack.py <input_directory> <office_file>`
+6. Validate the repacked `.pptx` with `ooxml-validator` before returning it or ending the task: `ooxml-validator <office_file>`
 
 ## Creating a new PowerPoint presentation **using a template**
 
@@ -487,6 +492,7 @@ Required dependencies (should already be installed):
 - **playwright**: `npm install -g playwright` (for HTML rendering in html2pptx)
 - **react-icons**: `npm install -g react-icons react react-dom` (for icons)
 - **sharp**: `npm install -g sharp` (for SVG rasterization and image processing)
+- **ooxml-validator**: `npm install -g @xarsh/ooxml-validator` (for final OOXML package validation before return)
 - **LibreOffice**: `sudo apt-get install libreoffice` (for PDF conversion)
 - **Poppler**: `sudo apt-get install poppler-utils` (for pdftoppm to convert PDF to images)
 - **defusedxml**: `pip install defusedxml` (for secure XML parsing)
